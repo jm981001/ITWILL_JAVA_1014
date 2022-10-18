@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Customer">
+
+	<select id="select" resultType="CustomerDTO">
+		<!-- Customer.select -->
+		<!-- SELECT IDX as idx
+			 , NAME as name
+			 , AGE as age
+			 , E_MAIL as eMail
+			 , JUMIN as jumin
+		  FROM CUSTOMER -->
+		  SELECT IDX
+			   , NAME
+			   , AGE
+			   , E_MAIL
+			   , JUMIN
+		    FROM CUSTOMER
+		    WHERE 1=1
+		  <if test="!NAME.equals('') and NAME != null">
+		 	 AND NAME LIKE '%${NAME}%'
+		  </if>
+		  <if test="!AGE.equals('') and AGE != null">
+		  	 AND AGE = #{AGE}
+		  </if>
+		  <if test="!JUMIN.equals('') and JUMIN != null">
+		  	 AND JUMIN LIKE CONCAT('%', #{JUMIN}, '%')
+		  </if>
+	</select>
+	
+	
+	<insert id="insert" parameterType="CustomerDTO">
+		INSERT INTO CUSTOMER
+			 ( IDX
+		     , NAME
+		     , AGE
+		     , E_MAIL
+		     , JUMIN)
+		VALUES (
+				(SELECT *
+		           FROM (SELECT IFNULL(MAX(CAST(IDX AS UNSIGNED)), 0)  + 1
+						   FROM CUSTOMER)A
+				)
+		      , #{name}
+		      , #{age}
+		      , #{eMail}
+			  , #{jumin}	
+			 )
+	</insert>
+	
+	<delete id="delete">
+		DELETE FROM CUSTOMER
+		 WHERE IDX = #{idx}
+	</delete>
+	
+	
+	
+	
+</mapper>
